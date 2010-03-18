@@ -53,3 +53,6 @@ INSTALLED_APPS = (
 )
 
 from localsettings import *
+
+if EXTRA_INSTALLED_APPS:
+    INSTALLED_APPS += EXTRA_INSTALLED_APPS
