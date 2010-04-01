@@ -1,0 +1,3 @@
+Django
+Microtron>=0.13
+South
