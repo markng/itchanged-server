@@ -1,5 +1,7 @@
 from django.core import serializers
 from django.http import HttpResponse
+from django.http import Http404
+from models import *
 import lxml.etree, lxml.html
 from django.shortcuts import render_to_response
 from microtron import Parser
@@ -13,4 +15,4 @@ def parse(request):
     tree = lxml.html.document_fromstring(html)
     hnews = Parser(tree).parse_format('hnews')
     
-    return HttpResponse("%s" % (simplejson.dumps(hnews)))
+    return HttpResponse("%s" % (simplejson.dumps(hnews, sort_keys=True, indent=4)))
