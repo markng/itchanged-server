@@ -54,5 +54,8 @@ INSTALLED_APPS = (
 
 from localsettings import *
 
-if EXTRA_INSTALLED_APPS:
-    INSTALLED_APPS += EXTRA_INSTALLED_APPS
+try:
+    if EXTRA_INSTALLED_APPS:
+        INSTALLED_APPS += EXTRA_INSTALLED_APPS    
+except Exception, e:
+    pass
