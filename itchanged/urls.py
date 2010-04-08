@@ -1,4 +1,6 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
+import os
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -14,5 +16,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
+    (r'^images/(.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PROJECT_PATH, 'media/images')}, 'images'),
+    (r'^stylesheets/(.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PROJECT_PATH, 'media/stylesheets')}),
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template' : 'pages/index.html'}, "home"),
+    #(r'^home/about/api$', 'django.views.generic.simple.direct_to_template', {'template' : 'faves/about_api.html'}, "faves-about-api"),
     (r'^', include('hnewsparser.urls')),
 )
