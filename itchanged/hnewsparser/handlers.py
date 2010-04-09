@@ -42,7 +42,7 @@ class UserHandler(BaseHandler):
         
         user = User()
         user.username = newusername
-        user.password = newpassword
+        user.set_password(newpassword)
         user.save()
         userdetails = { 'username' : newusername, 'password' : newpassword }
         return userdetails
