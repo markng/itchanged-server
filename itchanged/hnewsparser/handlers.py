@@ -16,6 +16,10 @@ class StoryHandler(BaseHandler):
         story.save()
         return story
     
+    def create(self, request):
+        # alias POST to PUT for JS XHR clients (unfortunate, but necessary.)
+        return self.update(request)
+    
     def update(self, request):
         story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
         story.comphash = request.PUT.get('comphash') # blindly trust, for the moment. FIX; send to celery queue to be processed
