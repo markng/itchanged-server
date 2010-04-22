@@ -21,7 +21,7 @@ class StoryHandler(BaseHandler):
         return self.update(request)
     
     def update(self, request):
-        story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
+        story, created = Story.objects.get_or_create(url=request.GET.get('url'))
         story.comphash = request.PUT.get('comphash') # blindly trust, for the moment. FIX; send to celery queue to be processed
         story.save()
         # TODO : attach to users list of stories
