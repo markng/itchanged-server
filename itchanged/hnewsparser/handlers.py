@@ -7,7 +7,7 @@ import string
 
 class StoryHandler(BaseHandler):
     """REST API for Stories"""        
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET', 'PUT', 'POST')
     fields = ('url', 'comphash')
     model = Story
     
