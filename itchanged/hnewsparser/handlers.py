@@ -1,5 +1,6 @@
 from piston.handler import BaseHandler
 from hnewsparser.models import Story
+from hnewsparser.models import Subscription
 from django.contrib.auth.models import User
 import base64
 import random
@@ -12,9 +13,10 @@ class StoryHandler(BaseHandler):
     model = Story
     
     def read(self, request):
-        story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
-        story.save()
-        return story
+        if request.GET.get('story_url'):    
+            story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
+            story.save()
+            return story
     
     def create(self, request):
         # alias POST to PUT for JS XHR clients (unfortunate, but necessary.)
@@ -25,7 +27,9 @@ class StoryHandler(BaseHandler):
         story, created = Story.objects.get_or_create(url=url)
         story.comphash = request.GET.get('comphash', request.POST.get('comphash')) # blindly trust, for the moment. FIX; send to celery queue to be processed
         story.save()
-        # TODO : attach to users list of stories
+        subscription, created = Subscription.objects.get_or_create(story=story, user=request.user)
+        subscription.comphash = request.GET.get('comphash', request.POST.get('comphash'))
+        subscription.save()
         return story
         
 class UserHandler(BaseHandler):

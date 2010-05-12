@@ -1,6 +1,6 @@
 Django
 Microtron>=0.13
 South
-django-piston
+django-piston>=0.2.3rc1
 psycopg2
 celery

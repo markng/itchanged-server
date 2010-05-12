@@ -1,10 +1,17 @@
 from django.conf.urls.defaults import *
+from django.contrib import admin
 from django.conf import settings
 import os
 
+admin.autodiscover()
+
+urlpatterns = patterns('',
+    (r'^admin/', include(admin.site.urls)),
+)
+
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
@@ -21,4 +28,5 @@ urlpatterns = patterns('',
     (r'^$', 'django.views.generic.simple.direct_to_template', {'template' : 'pages/index.html'}, "home"),
     #(r'^home/about/api$', 'django.views.generic.simple.direct_to_template', {'template' : 'faves/about_api.html'}, "faves-about-api"),
     (r'^', include('hnewsparser.urls')),
+    (r'^admin/', include(admin.site.urls)),
 )
