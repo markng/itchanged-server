@@ -1,35 +1,61 @@
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
+import datetime
+import hashlib
 
 class StoryManager(models.Manager):
     """manager for returning users subscribed updated stories"""
     def get_user_updated(self, user):
-        return self
+        return self.filter(subscription__flag=True, user=user)
 
 class Story(models.Model):
     """news story"""
     url = models.URLField(primary_key=True)
     comphash = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)    
+    updated = models.DateTimeField(auto_now_add=True)
+    objects = StoryManager()
     
     def __unicode__(self):
         """unicode representation"""
         return self.url
     
-    def get(self):
+    def get(self, first=False):
         """crawl, get updates"""
+        hnews = self.get_hnews()
+        m = hashlib.md5()
+        m.update(hnews[0]['entry-content'])
+        if m.hexdigest() != self.comphash:
+            # hash changed, story updated
+            r = StoryRevision()
+            r.entry_title = hnews[0]['entry-title']
+            r.entry_summary = hnews[0]['entry_summary']
+            r.entry_content = hnews[0]['entry-content']
+            r.comphash = m.hexdigest()
+            r.story = self
+            r.save()
+            self.updated = datetime.datetime.now()
+            self.save()
+            # flag entries
+            self.subscription_set.exclude(comphash=r.comphash).update(flag=True)
+    
+    def get_hnews(self):
+        """get an hnews rep"""
         import urllib2
         import lxml.etree, lxml.html
         from microtron import Parser
         html = urllib2.urlopen(self.url).read()
         tree = lxml.html.document_fromstring(html)
-        
+        hnews = Parser(tree).parse_format('hnews')
+        return hnews
 
 class Subscription(models.Model):
     """user subscription to a story"""
     user = models.ForeignKey(User)
     story = models.ForeignKey(Story)
     comphash = models.TextField(null=True, blank=True)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now=True)
+    flag = models.BooleanField(default=False)
     
     def __unicode__(self):
         """unicoder rep"""
@@ -41,6 +67,7 @@ class StoryRevision(models.Model):
     entry_title = models.TextField(null=True, blank=True)
     entry_summary = models.TextField(null=True, blank=True)
     entry_content = models.TextField(null=True, blank=True)
+    comphash = models.TextField(null=True, blank=True)
     story = models.ForeignKey(Story)
     
     def __unicode__(self):

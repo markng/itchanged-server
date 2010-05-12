@@ -17,6 +17,9 @@ class StoryHandler(BaseHandler):
             story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
             story.save()
             return story
+        else:
+            stories = Story.objects.get_user_updated(request.user)
+            return stories
     
     def create(self, request):
         # alias POST to PUT for JS XHR clients (unfortunate, but necessary.)
