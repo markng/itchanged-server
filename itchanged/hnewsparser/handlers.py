@@ -1,4 +1,5 @@
 from piston.handler import BaseHandler
+from piston.utils import rc
 from hnewsparser.models import Story
 from hnewsparser.models import Subscription
 from django.contrib.auth.models import User
@@ -8,13 +9,13 @@ import string
 
 class StoryHandler(BaseHandler):
     """REST API for Stories"""        
-    allowed_methods = ('GET', 'PUT', 'POST')
+    allowed_methods = ('GET', 'PUT', 'POST','DELETE')
     fields = ('url', 'comphash')
     model = Story
     
     def read(self, request):
-        if request.GET.get('story_url'):    
-            story, created = Story.objects.get_or_create(url=request.GET.get('story_url'))
+        if request.GET.get('url'):    
+            story, created = Story.objects.get_or_create(url=request.GET.get('url'))
             story.save()
             return story
         else:
@@ -34,6 +35,14 @@ class StoryHandler(BaseHandler):
         subscription.comphash = request.GET.get('comphash', request.POST.get('comphash'))
         subscription.save()
         return story
+    
+    def delete(self, request):
+        """docstring for delete"""
+        url = request.GET.get('url', request.POST.get('url'))
+        story = Story.objects.get(url=url)
+        sub = Subscription.objects.get(story=story, user=request.user)
+        sub.delete()
+        return rc.DELETED
         
 class UserHandler(BaseHandler):
     """REST API for user accounts"""
