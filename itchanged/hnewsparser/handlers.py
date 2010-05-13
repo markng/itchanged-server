@@ -28,10 +28,13 @@ class StoryHandler(BaseHandler):
     
     def update(self, request):
         url = request.GET.get('url', request.POST.get('url'))
-        story, created = Story.objects.get_or_create(url=url)
+        story, storycreated = Story.objects.get_or_create(url=url)
         story.comphash = request.GET.get('comphash', request.POST.get('comphash')) # blindly trust, for the moment. FIX; send to celery queue to be processed
         story.save()
-        subscription, created = Subscription.objects.get_or_create(story=story, user=request.user)
+        subscription, subcreated = Subscription.objects.get_or_create(story=story, user=request.user)
+        if not subcreated:
+            # subscription wasn't created this time, so this is a read event
+            subscription.flag = False
         subscription.comphash = request.GET.get('comphash', request.POST.get('comphash'))
         subscription.save()
         return story
