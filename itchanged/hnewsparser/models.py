@@ -6,7 +6,7 @@ import hashlib
 class StoryManager(models.Manager):
     """manager for returning users subscribed updated stories"""
     def get_user_updated(self, user):
-        return self.filter(subscription__flag=True, user=user)
+        return self.filter(subscription__flag=True, subscription__user=user)
 
 class Story(models.Model):
     """news story"""
