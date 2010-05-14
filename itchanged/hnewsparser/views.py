@@ -36,4 +36,4 @@ def history(request):
                 differences.append(d.make_table(last.entry_content, next.entry_content))
                 last = next
             lc = lc + 1
-    return render_to_response("hnewsparser/history.html", { 'differences' : differences })
+    return render_to_response("hnewsparser/history.html", { 'story' : story, 'differences' : differences })
