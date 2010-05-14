@@ -14,5 +14,5 @@ urlpatterns = patterns('',
     (r'^parse$', 'hnewsparser.views.parse', {}, "hnews-parse"),
     url(r'^api/story$', story_resource),
     url(r'^api/users$', user_resource ),
-    url(r'^history$', 'hnewsparser.views.history', {}, "history"),
+    url(r'^changes$', 'hnewsparser.views.history', {}, "history"),
 )
