@@ -29,6 +29,8 @@ class StoryHandler(BaseHandler):
     def update(self, request):
         url = request.GET.get('url', request.POST.get('url'))
         story, storycreated = Story.objects.get_or_create(url=url)
+        if storycreated or story.comphash != request.GET.get('comphash', request.POST.get('comphash')):
+            story.get()
         story.comphash = request.GET.get('comphash', request.POST.get('comphash')) # blindly trust, for the moment. FIX; send to celery queue to be processed
         story.save()
         subscription, subcreated = Subscription.objects.get_or_create(story=story, user=request.user)

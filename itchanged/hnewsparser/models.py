@@ -25,15 +25,18 @@ class Story(models.Model):
         hnews = self.get_hnews()
         m = hashlib.md5()
         m.update(hnews[0]['entry-content'])
-        if m.hexdigest() != self.comphash:
+        print "get"
+        if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
+            print "get revision"
             # hash changed, story updated
             r = StoryRevision()
-            r.entry_title = hnews[0]['entry-title']
-            r.entry_summary = hnews[0]['entry_summary']
-            r.entry_content = hnews[0]['entry-content']
+            r.entry_title = str(hnews[0].get('entry-title'))
+            r.entry_summary = str(hnews[0].get('entry-summary'))
+            r.entry_content = str(hnews[0].get('entry-content'))
             r.comphash = m.hexdigest()
             r.story = self
             r.save()
+            self.comphash = m.hexdigest()
             self.updated = datetime.datetime.now()
             self.save()
             # flag entries
@@ -59,7 +62,7 @@ class Subscription(models.Model):
     
     def __unicode__(self):
         """unicoder rep"""
-        return "%s %s %s %s" % (self.user, self.story, self.updated, self.comphash)
+        return "%s %s %s %s" % (self.user, self.story, self.created, self.comphash)
 
 class StoryRevision(models.Model):
     """revision for a story"""
@@ -72,7 +75,7 @@ class StoryRevision(models.Model):
     
     def __unicode__(self):
         """unicode representation"""
-        return "%s from %s" % (entry_title, seen_at)
+        return "%s from %s" % (self.entry_title, self.seen_at)
 
 class Location(models.Model):
     """a specific location"""
