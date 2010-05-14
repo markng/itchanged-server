@@ -24,14 +24,14 @@ class Story(models.Model):
         """crawl, get updates"""
         hnews = self.get_hnews()
         m = hashlib.md5()
-        m.update(hnews[0]['entry-content'])
+        m.update(hnews[0]['entry-content'].encode('utf-8'))
         if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
             print "get revision"
             # hash changed, story updated
             r = StoryRevision()
-            r.entry_title = str(hnews[0].get('entry-title'))
-            r.entry_summary = str(hnews[0].get('entry-summary'))
-            r.entry_content = str(hnews[0].get('entry-content'))
+            r.entry_title = str(hnews[0].get('entry-title').encode('utf-8'))
+            r.entry_summary = str(hnews[0].get('entry-summary').encode('utf-8'))
+            r.entry_content = str(hnews[0].get('entry-content').encode('utf-8'))
             r.comphash = m.hexdigest()
             r.story = self
             r.save()
