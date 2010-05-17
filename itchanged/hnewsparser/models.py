@@ -29,9 +29,9 @@ class Story(models.Model):
             print "get revision"
             # hash changed, story updated
             r = StoryRevision()
-            r.entry_title = str(hnews[0].get('entry-title').encode('utf-8'))
-            r.entry_summary = str(hnews[0].get('entry-summary').encode('utf-8'))
-            r.entry_content = str(hnews[0].get('entry-content').encode('utf-8'))
+            r.entry_title = str(hnews[0].get('entry-title', '').encode('utf-8'))
+            r.entry_summary = str(hnews[0].get('entry-summary', '').encode('utf-8'))
+            r.entry_content = str(hnews[0].get('entry-content', '').encode('utf-8'))
             r.comphash = m.hexdigest()
             r.story = self
             r.save()
