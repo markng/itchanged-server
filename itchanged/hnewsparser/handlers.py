@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 import base64
 import random
 import string
+import simplejson
 
 class StoryHandler(BaseHandler):
     """REST API for Stories"""        
@@ -27,17 +28,32 @@ class StoryHandler(BaseHandler):
         return self.update(request)
     
     def update(self, request):
-        url = request.GET.get('url', request.POST.get('url'))
+        if request.POST.get('data'):
+            # bulkload via json
+            data = simplejson.loads(request.POST.get('data'))
+            stories = []
+            for pair in data:
+                stories.append(self.storyadd(request, pair['url'], pair['hash']))
+            return stories
+        else:
+            # single urlparams
+            url = request.GET.get('url', request.POST.get('url'))
+            comphash = request.GET.get('comphash', request.POST.get('comphash'))
+            story = self.storyadd(request, url, comphash)
+            return story
+    
+    def storyadd(self, request, url, comphash):
+        """add a single story, subscribe"""
         story, storycreated = Story.objects.get_or_create(url=url)
-        if storycreated or story.comphash != request.GET.get('comphash', request.POST.get('comphash')):
+        if storycreated or story.comphash != comphash:
             story.get()
-        story.comphash = request.GET.get('comphash', request.POST.get('comphash')) # blindly trust, for the moment. FIX; send to celery queue to be processed
+        story.comphash = comphash
         story.save()
         subscription, subcreated = Subscription.objects.get_or_create(story=story, user=request.user)
         if not subcreated:
             # subscription wasn't created this time, so this is a read event
             subscription.flag = False
-        subscription.comphash = request.GET.get('comphash', request.POST.get('comphash'))
+        subscription.comphash = comphash
         subscription.save()
         return story
     
