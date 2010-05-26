@@ -25,6 +25,7 @@ class Story(models.Model):
         hnews = self.get_hnews()
         m = hashlib.md5()
         m.update(hnews[0]['entry-content'].encode('utf-8'))
+        self.comphash = m.hexdigest()
         if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
             print "get revision"
             # hash changed, story updated
