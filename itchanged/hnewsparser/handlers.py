@@ -47,7 +47,8 @@ class StoryHandler(BaseHandler):
         story, storycreated = Story.objects.get_or_create(url=url)
         if storycreated or story.comphash != comphash:
             story.get()
-        story.comphash = comphash
+        if not story.comphash:
+            story.comphash = comphash
         story.save()
         subscription, subcreated = Subscription.objects.get_or_create(story=story, user=request.user)
         if not subcreated:
