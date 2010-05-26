@@ -26,6 +26,8 @@ class Story(models.Model):
         m = hashlib.md5()
         m.update(hnews[0]['entry-content'].encode('utf-8'))
         self.comphash = m.hexdigest()
+        self.updated = datetime.datetime.now()
+        self.save()
         if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
             print "get revision"
             # hash changed, story updated
@@ -36,9 +38,6 @@ class Story(models.Model):
             r.comphash = m.hexdigest()
             r.story = self
             r.save()
-            self.comphash = m.hexdigest()
-            self.updated = datetime.datetime.now()
-            self.save()
             # flag entries
             self.subscription_set.exclude(comphash=r.comphash).update(flag=True)
     
