@@ -29,7 +29,6 @@ class Story(models.Model):
         self.updated = datetime.datetime.now()
         self.save()
         if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
-            print "get revision"
             # hash changed, story updated
             r = StoryRevision()
             r.entry_title = str(hnews[0].get('entry-title', '').encode('utf-8'))
