@@ -20,7 +20,11 @@ class StoryHandler(BaseHandler):
             story.save()
             return story
         else:
-            stories = Story.objects.get_user_updated(request.user)
+            updated = request.GET.get('updated', False)
+            if updated:
+                stories = Story.objects.get_user_updated(request.user)
+            else:
+                stories = Story.objects.filter(subscription__user=request.user)
             return stories
     
     def create(self, request):
