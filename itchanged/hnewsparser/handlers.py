@@ -60,10 +60,13 @@ class StoryHandler(BaseHandler):
     
     def delete(self, request):
         """docstring for delete"""
-        url = request.GET.get('url', request.POST.get('url'))
-        story = Story.objects.get(url=url)
-        sub = Subscription.objects.get(story=story, user=request.user)
-        sub.delete()
+        url = request.GET.get('url', request.POST.get('url', None))
+        if url:
+            story = Story.objects.get(url=url)
+            sub = Subscription.objects.get(story=story, user=request.user)
+            sub.delete()
+        else:
+            Subscription.objects.filter(user=request.user).delete()
         return rc.DELETED
         
 class UserHandler(BaseHandler):
