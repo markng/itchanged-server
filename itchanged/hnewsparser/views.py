@@ -9,6 +9,21 @@ import urllib2
 import difflib
 import simplejson
 
+def json_callback(view_func):
+  """if the GET parameter callback is set, wrap response in a function with that name"""
+  def _decorator(request, *args, **kwargs):
+    try:
+      # check for callback, if it's there, modify the return
+      callback = request.GET.__getitem__('callback')
+      response = view_func(request, *args, **kwargs)
+      response.content = callback + '(%s);' % response.content
+      return response
+    except KeyError, e:
+      # callback not found, just return the original function
+      return view_func(request, *args, **kwargs)
+  return _decorator
+
+@json_callback
 def parse(request):
     """return a parsed article (just JSON for the moment)"""
     url = request.GET['url']
