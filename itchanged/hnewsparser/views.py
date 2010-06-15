@@ -35,6 +35,9 @@ def parse(request):
     
 def history(request):
     """return a bunch of diff changes"""
+    import diff_match_patch
+    from textwrap import wrap
+    d = diff_match_patch.diff_match_patch()
     url = request.GET['url']
     story = Story.objects.get(url=url)
     differences = []
@@ -47,8 +50,9 @@ def history(request):
                 last = revision
             else:
                 next = revision
-                d = difflib.HtmlDiff()
-                differences.append(d.make_table(last.entry_content, next.entry_content))
+                oldtext = "\r\n".join(wrap(last.entry_content, 70))
+                newtext = "\r\n".join(wrap(next.entry_content, 70))
+                differences.append(d.diff_prettyHtml(d.diff_main(oldtext, newtext)))
                 last = next
             lc = lc + 1
     return render_to_response("hnewsparser/history.html", { 'story' : story, 'differences' : differences })
