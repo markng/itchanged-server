@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="box">
+		<div class="holder">
+			<div class="frame">
+				<img src="images/img02.gif" alt="" width="340" height="101" />
+				<div class="wrap-box">
+					<div class="button">
+						<div class="holder">
+							<div class="frame">
+								<a class="link1" href="#">Learn more</a>
+							</div>
+						</div>
+					</div>
+					<div class="button">
+						<div class="holder">
+							<div class="frame">
+								<a class="link2" href="/downloads/itchanged-0.8.xpi">Add to Firefox</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="area">
+		<div class="holder">
+			<div class="frame">
+				<div id="content">
+				  <h2 class="heading">track changes in news articles</h2>
+				  <p>itchanged alerts you when an hNews or hatom enabled article you’ve read has been changed and enables you to see those changes. Over 250 US news sites are already hNews enabled, and the number is growing.</p>
+				  <img src="/images/frontpagedemo.png" style="float: left; margin-right: 2px;">
+				  <p>It's a firefox extension that is <strong>free</strong> to <a href="/downloads/itchanged-0.8.xpi">download</a> and use, and is <a href="http://github.com/markng/itchanged-server">open source</a>.</p>
+				  <p><a href="/downloads/itchanged-0.8.xpi">Install</a> it and <a href="/about">read about how to use it</a>.</p>
+				</div>
+				<div class="aside">
+				  <h2 class="heading">#itchanged</h2>
+					<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+          <script>
+          new TWTR.Widget({
+            version: 2,
+            type: 'search',
+            search: 'itchanged',
+            interval: 6000,
+            title: '',
+            subject: '',
+            width: 'auto',
+            height: 300,
+            theme: {
+              shell: {
+                background: '#ffffff',
+                color: '#ffffff'
+              },
+              tweets: {
+                background: '#ffffff',
+                color: '#444444',
+                links: '#1985b5'
+              }
+            },
+            features: {
+              scrollbar: false,
+              loop: true,
+              live: true,
+              hashtags: true,
+              timestamp: true,
+              avatars: true,
+              behavior: 'default'
+            }
+          }).render().start();
+          </script>
+          <br>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
