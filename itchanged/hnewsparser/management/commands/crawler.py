@@ -3,13 +3,14 @@ from django.conf import settings
 from hnewsparser.models import Story
 import django.utils.daemonize
 import datetime
+import time
 
 class Command(NoArgsCommand):
     """spider"""
     def handle_noargs(self, **options):
         django.utils.daemonize.become_daemon()
         while True:
-            stories = Story.objects.all(next_crawl__lt=datetime.datetime.now())
+            stories = Story.objects.filter(next_crawl__lt=datetime.datetime.now())
             for story in stories:
                 try:
                     story.get()
