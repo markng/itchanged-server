@@ -1,13 +1,9 @@
-<!DOCTYPE HTML>
-  <html>
-    <head>
-      <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-      <title>history</title>
-    </head>
-    <body>
-      <h1>{{ story }}</h1>
-      {% for difference in differences %}
-        {{ difference|safe }}
-      {% endfor %}
-    </body>
-  </html>
+{% extends "content.html" %}
+{% block intitle %}
+  Changes
+{% endblock %}
+{% block article %}
+  {% for difference in differences %}
+    {{ difference|safe }}
+  {% endfor %}
+{% endblock %}
