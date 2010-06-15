@@ -14,6 +14,7 @@ class Story(models.Model):
     comphash = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)    
     updated = models.DateTimeField(auto_now_add=True)
+    next_crawl = models.DateTimeField(null=True, blank=True)
     objects = StoryManager()
     
     def __unicode__(self):
@@ -27,6 +28,14 @@ class Story(models.Model):
         m.update(hnews[0]['entry-content'].encode('utf-8'))
         self.comphash = m.hexdigest()
         self.updated = datetime.datetime.now()
+        if not self.next_crawl:
+            self.next_crawl = datetime.datetime.now() + datetime.timedelta(minutes=20) # set first refresh to 20 minutes
+        elif self.storyrevision_set.count() <= 1:
+            difference = datetime.datetime.now() - self.created
+            self.next_crawl = datetime.datetime.now() + (difference * 2) # double backoff
+        else:
+            difference = datetime.datetime.now() - self.storyrevision_set.order_by('-seen_at')[0].seen_at
+            self.next_crawl = datetime.datetime.now() + (difference * 2) # double backoff
         self.save()
         if not StoryRevision.objects.filter(story=self, comphash=m.hexdigest()):
             # hash changed, story updated
@@ -37,6 +46,8 @@ class Story(models.Model):
             r.comphash = m.hexdigest()
             r.story = self
             r.save()
+            self.next_crawl = datetime.datetime.now() + datetime.timedelta(minutes=20)
+            self.save()
             # flag entries
             self.subscription_set.exclude(comphash=r.comphash).update(flag=True)
     
