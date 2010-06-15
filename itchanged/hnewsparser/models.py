@@ -23,7 +23,7 @@ class Story(models.Model):
     
     def get(self, first=False):
         """crawl, get updates"""
-        hnews = self.get_hnews()
+        hnews = self.get_article()
         m = hashlib.md5()
         m.update(hnews[0]['entry-content'].encode('utf-8'))
         self.comphash = m.hexdigest()
@@ -51,15 +51,17 @@ class Story(models.Model):
             # flag entries
             self.subscription_set.exclude(comphash=r.comphash).update(flag=True)
     
-    def get_hnews(self):
+    def get_article(self):
         """get an hnews rep"""
         import urllib2
         import lxml.etree, lxml.html
         from microtron import Parser
         html = urllib2.urlopen(self.url).read()
         tree = lxml.html.document_fromstring(html)
-        hnews = Parser(tree).parse_format('hnews')
-        return hnews
+        articles = Parser(tree).parse_format('hnews')
+        if not articles:
+            articles = Parser(tree).parse_format('hentry')
+        return articles
 
 class Subscription(models.Model):
     """user subscription to a story"""
