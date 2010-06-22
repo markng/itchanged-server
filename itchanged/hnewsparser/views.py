@@ -30,8 +30,8 @@ def parse(request):
     html = urllib2.urlopen(request.GET['url']).read()
     tree = lxml.html.document_fromstring(html)
     hnews = Parser(tree).parse_format('hnews')
-    
-    return HttpResponse("%s" % (simplejson.dumps(hnews, sort_keys=True, indent=4)))
+    dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
+    return HttpResponse("%s" % (simplejson.dumps(hnews, sort_keys=True, indent=4, default=dthandler)))
     
 def history(request):
     """return a bunch of diff changes"""
