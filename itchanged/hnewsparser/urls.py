@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^api/story$', story_resource),
     url(r'^api/users$', user_resource ),
     url(r'^changes$', 'hnewsparser.views.history', {}, "history"),
+    url(r'^success$', 'django.views.generic.simple.direct_to_template', {}, "success"),
 )

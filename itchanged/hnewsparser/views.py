@@ -48,11 +48,15 @@ def history(request):
         for revision in qs.all():
             if lc == 1:
                 last = revision
+                differences.append(last.entry_content)
             else:
                 next = revision
                 oldtext = "\r\n".join(wrap(last.entry_content, 70))
                 newtext = "\r\n".join(wrap(next.entry_content, 70))
-                differences.append(d.diff_prettyHtml(d.diff_main(oldtext, newtext)))
+                diff = d.diff_main(newtext, oldtext, checklines=False)
+                #diff = d.diff_cleanupSemantic(diff)
+                differences.append(d.diff_prettyHtml(diff))
                 last = next
             lc = lc + 1
+    differences.reverse()
     return render_to_response("hnewsparser/history.html", { 'story' : story, 'differences' : differences })

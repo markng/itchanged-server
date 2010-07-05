@@ -120,7 +120,8 @@ class diff_match_patch:
       diffs[:0] = [(self.DIFF_EQUAL, commonprefix)]
     if commonsuffix:
       diffs.append((self.DIFF_EQUAL, commonsuffix))
-    self.diff_cleanupMerge(diffs)
+    #self.diff_cleanupMerge(diffs)
+    #self.diff_cleanupSemantic(diffs)
     return diffs
 
   def diff_compute(self, text1, text2, checklines):
@@ -1004,13 +1005,13 @@ class diff_match_patch:
       text = (data.replace("&", "&amp;").replace("<", "&lt;")
                  .replace(">", "&gt;").replace("\n", "<br>"))
       if op == self.DIFF_INSERT:
-        html.append("<INS STYLE=\"background:#E6FFE6;\" TITLE=\"i=%i\">%s</INS>"
-            % (i, text))
+        html.append("<strong>%s</strong><br>"
+            % (text))
       elif op == self.DIFF_DELETE:
-        html.append("<DEL STYLE=\"background:#FFE6E6;\" TITLE=\"i=%i\">%s</DEL>"
-            % (i, text))
+        html.append("<DEL>%s</DEL><br>"
+            % (text))
       elif op == self.DIFF_EQUAL:
-        html.append("<SPAN TITLE=\"i=%i\">%s</SPAN>" % (i, text))
+        html.append("<SPAN>%s</SPAN>" % (text))
       if op != self.DIFF_DELETE:
         i += len(data)
     return "".join(html)

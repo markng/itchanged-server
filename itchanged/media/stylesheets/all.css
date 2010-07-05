@@ -245,3 +245,7 @@ a:hover{text-decoration:none;}
 }
 .inner #footer a{color:#b3afaf;}
 .inner .footer-link{background:url(../images/bg-footer-link-inner.gif) no-repeat 100% 50%;}
+div.revision{
+    border: 1px solid #d9d4d4;
+    width: 50em;
+}
