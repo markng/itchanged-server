@@ -1005,10 +1005,10 @@ class diff_match_patch:
       text = (data.replace("&", "&amp;").replace("<", "&lt;")
                  .replace(">", "&gt;").replace("\n", "<br>"))
       if op == self.DIFF_INSERT:
-        html.append("<strong>%s</strong><br>"
+        html.append("<strong>%s</strong>"
             % (text))
       elif op == self.DIFF_DELETE:
-        html.append("<DEL>%s</DEL><br>"
+        html.append("<DEL>%s</DEL>"
             % (text))
       elif op == self.DIFF_EQUAL:
         html.append("<SPAN>%s</SPAN>" % (text))
