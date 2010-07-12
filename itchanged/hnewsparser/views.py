@@ -55,8 +55,8 @@ def history(request):
                 })
         else:
             next = revision
-            oldtext = "\r\n".join(wrap(last.entry_content, 90))
-            newtext = "\r\n".join(wrap(next.entry_content, 90))
+            #oldtext = "\r\n".join(wrap(last.entry_content, 90))
+            #newtext = "\r\n".join(wrap(next.entry_content, 90))
             diff = d.diff_main(newtext, oldtext, checklines=False)
             #diff = d.diff_cleanupSemantic(diff)
             differences.append({
