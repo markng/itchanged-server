@@ -39,24 +39,25 @@ def history(request):
     from textwrap import wrap
     d = diff_match_patch.diff_match_patch()
     url = request.GET['url']
-    story = Story.objects.get(url=url)
+    story, storycreated = Story.objects.get_or_create(url=url)
+    if storycreated:
+        story.get()
     differences = []
     last = None
     qs = story.storyrevision_set
-    if qs.count() > 1:
-        lc = 1
-        for revision in qs.all():
-            if lc == 1:
-                last = revision
-                differences.append(last.entry_content)
-            else:
-                next = revision
-                oldtext = "\r\n".join(wrap(last.entry_content, 90))
-                newtext = "\r\n".join(wrap(next.entry_content, 90))
-                diff = d.diff_main(newtext, oldtext, checklines=False)
-                #diff = d.diff_cleanupSemantic(diff)
-                differences.append(d.diff_prettyHtml(diff))
-                last = next
-            lc = lc + 1
+    lc = 1
+    for revision in qs.all():
+        if lc == 1:
+            last = revision
+            differences.append(last.entry_content)
+        else:
+            next = revision
+            oldtext = "\r\n".join(wrap(last.entry_content, 90))
+            newtext = "\r\n".join(wrap(next.entry_content, 90))
+            diff = d.diff_main(newtext, oldtext, checklines=False)
+            #diff = d.diff_cleanupSemantic(diff)
+            differences.append(d.diff_prettyHtml(diff))
+            last = next
+        lc = lc + 1
     differences.reverse()
     return render_to_response("hnewsparser/history.html", { 'story' : story, 'differences' : differences })
