@@ -49,14 +49,20 @@ def history(request):
     for revision in qs.all():
         if lc == 1:
             last = revision
-            differences.append(last.entry_content)
+            differences.append({
+                'at' : last.seen_at,
+                'difference' : last.entry_content,
+                })
         else:
             next = revision
             oldtext = "\r\n".join(wrap(last.entry_content, 90))
             newtext = "\r\n".join(wrap(next.entry_content, 90))
             diff = d.diff_main(newtext, oldtext, checklines=False)
             #diff = d.diff_cleanupSemantic(diff)
-            differences.append(d.diff_prettyHtml(diff))
+            differences.append({
+                'at' : next.seen_at,
+                'difference' : d.diff_prettyHtml(diff),
+                })
             last = next
         lc = lc + 1
     differences.reverse()

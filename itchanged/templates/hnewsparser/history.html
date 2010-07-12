@@ -4,9 +4,9 @@
 {% endblock %}
 {% block article %}
   {% for difference in differences %}
-  <h2>Revision</h2>
+  <h2>{{ difference.at }}</h2>
   <div class="revision">
-    {{ difference|safe }}
+    {{ difference.difference|safe }}
   </div>
   {% endfor %}
 {% endblock %}
